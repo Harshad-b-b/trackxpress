@@ -31,14 +31,14 @@ function App() {
     iconSize: [30, 30], // size of the icon
   });
 
-  const handleLocationSucess = (position) => {
-    alert(position);
-    setLoc([position.coords.latitude, position.coords.longitude]);
-  };
+  // const handleLocationSucess = (position) => {
+  //   alert(position);
+  //   setLoc([position.coords.latitude, position.coords.longitude]);
+  // };
 
-  const handleLocationError = (error) => {
-    alert("Failed to get location");
-  };
+  // const handleLocationError = (error) => {
+  //   alert("Failed to get location");
+  // };
 
   const handleSearchSubmit = async () => {
     try {
@@ -59,8 +59,8 @@ function App() {
   };
 
   useEffect(() => {
-    // getLocation();
-    handleLocationSucess;
+    getLocation();
+    // handleLocationSucess;
     let timer = setInterval(() => {
       setCounter((prevCounter) => {
         setCapturedLocations((prev) => [...prev, currentPosition]);
@@ -93,51 +93,53 @@ function App() {
     return null;
   };
 
-  // const getLocation = () => {
-  //   if (navigator.geolocation) {
-  //     navigator.geolocation.getCurrentPosition(
-  //       (position) => {
-  //         setCurrentPosition([
-  //           position.coords.latitude,
-  //           position.coords.longitude,
-  //         ]);
-  //         setCapturedLocations([
-  //           [12.9716, 77.5946],
-  //           [position.coords.latitude, position.coords.longitude],
-  //         ]);
-  //         setError(null);
-  //       },
-  //       (error) => {
-  //         // Geolocation permission denied
-  //         setCurrentPosition([13.0827, 80.2707]); // Chennai coordinates (center of the map)
+  const getLocation = () => {
+    if (navigator.geolocation) {
+      alert("amigo");
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setCurrentPosition([
+            position.coords.latitude,
+            position.coords.longitude,
+          ]);
+          setCapturedLocations([
+            [12.9716, 77.5946],
+            [position.coords.latitude, position.coords.longitude],
+          ]);
+          setError(null);
+        },
+        (error) => {
+          // Geolocation permission denied
+          setCurrentPosition([13.0827, 80.2707]); // Chennai coordinates (center of the map)
 
-  //         setError(error.message);
-  //       }
-  //     );
-  //   } else {
-  //     // Geolocation not supported by the browser
-  //     setCurrentPosition([12.9716, 77.5946]); // Bangalore coordinates
+          setError(error.message);
+        }
+      );
+    } else {
+      // Geolocation not supported by the browser
+      setCurrentPosition([12.9716, 77.5946]); // Bangalore coordinates
 
-  //     setError("Geolocation is not supported by your browser.");
-  //   }
-  // };
+      setError("Geolocation is not supported by your browser.");
+    }
+  };
 
   useEffect(() => {
-    // getLocation();
+    getLocation();
     // alert("amigo");
-    handleLocationSucess;
+    // handleLocationSucess;
   }, [loc]); // Get location on component mount
 
   return (
     <>
-      {loc ? (
+      {/* {loc ? (
         JSON.stringify(loc)
       ) : (
         <Geolocation
           onSuccess={handleLocationSucess}
           onError={handleLocationError}
         />
-      )}
+      )} */}
+      {JSON.stringify(currentPosition)}
       <div
         style={{
           width: "100%",
@@ -152,10 +154,11 @@ function App() {
       </div>
       <div
         style={{
-          width: "50%",
+          width: "80%",
           marginTop: "100px",
           display: "flex",
           justifyContent: "center",
+          alignItems: "center",
         }}
       >
         <MapContainer
@@ -248,7 +251,7 @@ function App() {
                   position: "relative",
                   bottom: "50px",
                 }}
-                // onClick={getLocation}
+                onClick={getLocation}
               >
                 Get Current Location
               </button>
