@@ -114,7 +114,6 @@ function App() {
 
   const getLocation = () => {
     if (navigator.geolocation) {
-      alert("amigo");
       navigator.geolocation.getCurrentPosition(
         (position) => {
           setCurrentPosition([
