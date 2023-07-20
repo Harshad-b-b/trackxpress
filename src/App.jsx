@@ -24,19 +24,12 @@ function App() {
   const [customerPosition, setCustomerPosition] = useState(null);
   const [cityData, setCityData] = useState(null);
   const [counter, setCounter] = useState(0);
+  const [intervalRunning, setIntervalRunning] = useState(true);
+
   const customIcon = new Icon({
     iconUrl: marker,
     iconSize: [30, 30], // size of the icon
   });
-
-  // const handleLocationSucess = (position) => {
-  //   alert(position);
-  //   setLoc([position.coords.latitude, position.coords.longitude]);
-  // };
-
-  // const handleLocationError = (error) => {
-  //   alert("Failed to get location");
-  // };
 
   const handleSearchSubmit = async () => {
     try {
@@ -56,10 +49,54 @@ function App() {
     }
   };
 
+  useEffect(() => {
+    if (cityData) {
+      handleSearchSubmit();
+    }
+  }, [cityData]);
+
+  const Markers = () => {
+    const map = useMapEvents({
+      click(e) {
+        setCityData([e.latlng.lat, e.latlng.lng]);
+      },
+    });
+    return null;
+  };
+
+  useEffect(() => {
+    getLocation();
+  }, []);
+
   // useEffect(() => {
-  //   getLocation();
-  //   // handleLocationSucess;
+  //   const getLocationAndUpdateCounter = async () => {
+  //     try {
+  //       const position = await new Promise((resolve, reject) => {
+  //         navigator.geolocation.getCurrentPosition(
+  //           (position) => resolve(position),
+  //           (error) => reject(error)
+  //         );
+  //       });
+
+  //       setCurrentPosition([
+  //         position.coords.latitude,
+  //         position.coords.longitude,
+  //       ]);
+  //       setCapturedLocations([
+  //         [position.coords.latitude, position.coords.longitude],
+  //       ]);
+  //       setError(null);
+  //     } catch (error) {
+  //       // Geolocation error
+  //       setCurrentPosition([13.0827, 80.2707]); // Chennai coordinates (center of the map)
+  //       setError(error.message);
+  //     }
+  //   };
+
+  //   getLocationAndUpdateCounter();
+
   //   let timer = setInterval(() => {
+  //     getLocationAndUpdateCounter();
   //     setCounter((prevCounter) => {
   //       setCapturedLocations((prev) => [...prev, currentPosition]);
   //       const updatedCounter = prevCounter + 1;
@@ -76,41 +113,46 @@ function App() {
   //   };
   // }, []);
 
-  // useEffect(() => {
-  //   if (cityData) {
-  //     handleSearchSubmit();
-  //   }
-  // }, [cityData]);
-
   useEffect(() => {
-    if (cityData) {
-      handleSearchSubmit();
+    const getLocationAndUpdateCounter = async () => {
+      try {
+        const position = await new Promise((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(
+            (position) => resolve(position),
+            (error) => reject(error)
+          );
+        });
+
+        setCurrentPosition([
+          position.coords.latitude,
+          position.coords.longitude,
+        ]);
+        setCapturedLocations((prev) => [
+          ...prev,
+          [position.coords.latitude, position.coords.longitude],
+        ]);
+        setError(null);
+      } catch (error) {
+        // Geolocation error
+        setCurrentPosition([13.0827, 80.2707]); // Chennai coordinates (center of the map)
+        setError(error.message);
+      }
+    };
+
+    getLocationAndUpdateCounter();
+
+    let timer;
+    if (intervalRunning) {
+      timer = setInterval(() => {
+        getLocationAndUpdateCounter();
+      }, 1000);
     }
-  }, [cityData]);
 
-  // const Markers = () => {
-  //   const map = useMapEvents({
-  //     click(e) {
-  //       setCityData([e.latlng.lat, e.latlng.lng]);
-  //     },
-  //   });
-  //   return null;
-  // };
-
-  const Markers = () => {
-    const map = useMapEvents({
-      click(e) {
-        setCityData([e.latlng.lat, e.latlng.lng]);
-      },
-    });
-    return null;
-  };
-
-  useEffect(() => {
-    getLocation();
-    // alert("amigo"); // Remove this line, as it's commented out
-    // handleLocationSucess; // Remove this line, as it's a commented out function
-  }, [loc]);
+    // Clear the interval when the component unmounts
+    return () => {
+      clearInterval(timer);
+    };
+  }, [intervalRunning]);
 
   const getLocation = () => {
     if (navigator.geolocation) {
@@ -120,9 +162,9 @@ function App() {
             position.coords.latitude,
             position.coords.longitude,
           ]);
-          setCapturedLocations([
-            [position.coords.latitude, position.coords.longitude],
-          ]);
+          // setCapturedLocations([
+          //   [position.coords.latitude, position.coords.longitude],
+          // ]);
           setError(null);
         },
         (error) => {
@@ -134,22 +176,19 @@ function App() {
       );
     } else {
       // Geolocation not supported by the browser
-      setCurrentPosition([12.9716, 77.5946]); // Bangalore coordinates
+      setCurrentPosition(); // Bangalore coordinates
 
       setError("Geolocation is not supported by your browser.");
     }
   };
 
+  const handleStopInterval = () => {
+    setIntervalRunning(!intervalRunning);
+  };
+
   return (
     <>
-      {/* {loc ? (
-        JSON.stringify(loc)
-      ) : (
-        <Geolocation
-          onSuccess={handleLocationSucess}
-          onError={handleLocationError}
-        />
-      )} */}
+      {JSON.stringify(capturedLocations)}
       {JSON.stringify(currentPosition)}
       <div
         style={{
@@ -163,6 +202,12 @@ function App() {
           Let me Pop up
         </a>
       </div>
+      <button
+        style={{ position: "relative", bottom: "50px" }}
+        onClick={handleStopInterval}
+      >
+        {!intervalRunning ? "Start Capturing" : "Stop Capturing"}
+      </button>
       <div
         style={{
           width: "80%",
