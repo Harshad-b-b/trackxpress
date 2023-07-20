@@ -60,6 +60,7 @@ function App() {
 
   useEffect(() => {
     // getLocation();
+    handleLocationSucess;
     let timer = setInterval(() => {
       setCounter((prevCounter) => {
         setCapturedLocations((prev) => [...prev, currentPosition]);
@@ -121,10 +122,11 @@ function App() {
   //   }
   // };
 
-  // useEffect(() => {
-  //   // getLocation();
-  //   handleLocationSucess;
-  // }, []); // Get location on component mount
+  useEffect(() => {
+    // getLocation();
+    // alert("amigo");
+    handleLocationSucess;
+  }, [loc]); // Get location on component mount
 
   return (
     <>
@@ -148,7 +150,14 @@ function App() {
           Let me Pop up
         </a>
       </div>
-      <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
+      <div
+        style={{
+          width: "100%",
+          marginTop: "100px",
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
         <MapContainer
           center={currentPosition}
           zoom={16}
