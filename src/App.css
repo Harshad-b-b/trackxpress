@@ -1,0 +1,236 @@
+#root{
+  width: 100%;
+}
+
+/* height of the container */
+.leaflet-container {
+  height: 80vh;
+  width: 100%;
+  /* border-radius: 2rem; */
+}
+
+.cluster-icon {
+  background-color: #333;
+  height: 2em;
+  width: 2em;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  box-shadow: 0 0 0px 5px #fff;
+}
+
+
+
+.box {
+  width: 40%;
+  margin: 0 auto;
+  background: rgba(255,255,255,0.2);
+  padding: 35px;
+  border: 2px solid #fff;
+  border-radius: 20px/50px;
+  background-clip: padding-box;
+  text-align: center;
+}
+
+.button {
+  font-size: 1em;
+  padding: 10px;
+  color: #2c2929;
+  border: 2px solid #06D85F;
+  border-radius: 20px/50px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease-out;
+}
+.button:hover {
+  background: #06D85F;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  transition: opacity 500ms;
+  visibility: hidden;
+  opacity: 0;
+}
+.overlay:target {
+  visibility: visible;
+  opacity: 1;
+}
+
+#popup1{
+  z-index: 100000;
+}
+
+.popup {
+  margin: 70px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 5px;
+  width: 30%;
+  position: relative;
+  transition: all 5s ease-in-out;
+  z-index: 5;
+}
+
+.popup h2 {
+  margin-top: 0;
+  color: #333;
+  font-family: Tahoma, Arial, sans-serif;
+}
+.popup .close {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  transition: all 200ms;
+  font-size: 30px;
+  font-weight: bold;
+  text-decoration: none;
+  color: #333;
+}
+.popup .close:hover {
+  color: #06D85F;
+}
+.popup .content {
+  max-height: 30%;
+  overflow: auto;
+}
+
+@media screen and (max-width: 700px){
+  .box{
+    width: 70%;
+  }
+  .popup{
+    width: 70%;
+  }
+}
+
+
+
+ .row {
+	 max-width: 800px;
+	 margin: 0 auto;
+	 padding: 1px 30px;
+	 background: #032429;
+	 position: relative;
+	 z-index: 1;
+	 text-align: center;
+}
+ .row:before {
+	 position: absolute;
+	 content: "";
+	 display: block;
+	 top: 0;
+	 left: -5000px;
+	 height: 100%;
+	 /* width: 15000px; */
+	 z-index: -1;
+	 background: inherit;
+}
+ .row:first-child {
+	 padding: 0px 30px;
+}
+ .row:nth-child(2), .row:nth-child(8), .row:nth-child(10) {
+	 background: #134a46;
+}
+ .row:nth-child(3), .row:nth-child(7) {
+	 background: #377d6a;
+}
+ .row:nth-child(4), .row:nth-child(6) {
+	 background: #7ab893;
+}
+ .row:nth-child(5) {
+	 background: #b2e3af;
+}
+ .row span {
+	 position: relative;
+	 display: inline-block;
+	 margin: 20px 5px;
+}
+ .slide-up {
+	 display: inline-block;
+	 width: 215px;
+	 padding: 10px 0 10px 15px;
+	 font-family: "Open Sans", sans;
+	 font-weight: 400;
+	 color: #377d6a;
+	 background: #efefef;
+	 border: 0;
+	 border-radius: 3px;
+	 outline: 0;
+	 text-indent: 80px;
+	 transition: all 0.3s ease-in-out;
+}
+ .slide-up::-webkit-input-placeholder {
+	 color: #efefef;
+	 text-indent: 0;
+	 font-weight: 300;
+}
+ .slide-up + label {
+  width: 27%;
+	 display: inline-block;
+	 position: absolute;
+	 transform: translateX(0);
+	 top: 0;
+	 left: 0;
+	 padding: 6px 15px;
+	 text-shadow: 0 1px 0 rgba(19, 74, 70, .4);
+	 transition: all 0.3s ease-in-out;
+	 border-top-left-radius: 3px;
+	 border-bottom-left-radius: 3px;
+	 overflow: hidden;
+}
+ .slide-up + label:before, .slide-up + label:after {
+  padding: 6px 15px;
+	 content: "";
+	 position: absolute;
+	 right: 0;
+	 left: 0;
+	 z-index: -1;
+	 transition: all 0.3s ease-in-out;
+}
+ .slide-up + label:before {
+  padding: 6px 15px;
+	 top: 6px;
+	 left: 5px;
+	 right: 5px;
+	 bottom: 6px;
+	 background: #377d6a;
+}
+ .slide-up + label:after {
+  padding: 6px 15px;
+	 top: 0;
+	 bottom: 0;
+	 background: #377d6a;
+}
+ span:nth-child(1) .slide-up:focus, span:nth-child(1) .slide-up:active, span:nth-child(3) .slide-up:focus, span:nth-child(3) .slide-up:active {
+	 text-indent: 0;
+}
+ .slide-up:focus, .slide-up:active {
+	 color: #377d6a;
+	 text-indent: 0;
+	 background: #fff;
+}
+ .slide-up:focus::-webkit-input-placeholder, .slide-up:active::-webkit-input-placeholder {
+	 color: #aaa;
+}
+ .slide-up:focus + label, .slide-up:active + label {
+  padding: 6px 15px;
+	 transform: translateY(-100%);
+}
+ .slide-up:focus + label:before, .slide-up:active + label:before {
+  padding: 6px 15px;
+	 border-radius: 5px;
+}
+ .slide-up:focus + label:after, .slide-up:active + label:after {
+  padding: 6px 15px;
+	 transform: translateY(100%);
+}
+ 
