@@ -17,9 +17,7 @@ import marker from "./assets/marker.png";
 
 function App() {
   const [capturedLocations, setCapturedLocations] = useState([]);
-  const [currentPosition, setCurrentPosition] = useState([
-    12.943631657738578, 77.62045846193489,
-  ]);
+  const [currentPosition, setCurrentPosition] = useState(null);
   const [loc, setLoc] = useState(null);
   const [error, setError] = useState(null);
   const [placeName, setPlaceName] = useState("loading");
@@ -58,31 +56,46 @@ function App() {
     }
   };
 
-  useEffect(() => {
-    getLocation();
-    // handleLocationSucess;
-    let timer = setInterval(() => {
-      setCounter((prevCounter) => {
-        setCapturedLocations((prev) => [...prev, currentPosition]);
-        const updatedCounter = prevCounter + 1;
-        if (updatedCounter >= 10) {
-          clearInterval(timer);
-        }
-        return updatedCounter;
-      });
-    }, 1000);
+  // useEffect(() => {
+  //   getLocation();
+  //   // handleLocationSucess;
+  //   let timer = setInterval(() => {
+  //     setCounter((prevCounter) => {
+  //       setCapturedLocations((prev) => [...prev, currentPosition]);
+  //       const updatedCounter = prevCounter + 1;
+  //       if (updatedCounter >= 10) {
+  //         clearInterval(timer);
+  //       }
+  //       return updatedCounter;
+  //     });
+  //   }, 1000);
 
-    // Clear the interval when the component unmounts
-    return () => {
-      clearInterval(timer);
-    };
-  }, []);
+  //   // Clear the interval when the component unmounts
+  //   return () => {
+  //     clearInterval(timer);
+  //   };
+  // }, []);
+
+  // useEffect(() => {
+  //   if (cityData) {
+  //     handleSearchSubmit();
+  //   }
+  // }, [cityData]);
 
   useEffect(() => {
     if (cityData) {
       handleSearchSubmit();
     }
   }, [cityData]);
+
+  // const Markers = () => {
+  //   const map = useMapEvents({
+  //     click(e) {
+  //       setCityData([e.latlng.lat, e.latlng.lng]);
+  //     },
+  //   });
+  //   return null;
+  // };
 
   const Markers = () => {
     const map = useMapEvents({
@@ -92,6 +105,12 @@ function App() {
     });
     return null;
   };
+
+  useEffect(() => {
+    getLocation();
+    // alert("amigo"); // Remove this line, as it's commented out
+    // handleLocationSucess; // Remove this line, as it's a commented out function
+  }, [loc]);
 
   const getLocation = () => {
     if (navigator.geolocation) {
@@ -103,7 +122,6 @@ function App() {
             position.coords.longitude,
           ]);
           setCapturedLocations([
-            [12.9716, 77.5946],
             [position.coords.latitude, position.coords.longitude],
           ]);
           setError(null);
@@ -122,12 +140,6 @@ function App() {
       setError("Geolocation is not supported by your browser.");
     }
   };
-
-  useEffect(() => {
-    getLocation();
-    // alert("amigo");
-    // handleLocationSucess;
-  }, [loc]); // Get location on component mount
 
   return (
     <>
@@ -162,28 +174,32 @@ function App() {
         }}
       >
         <MapContainer
-          center={currentPosition}
+          center={[12.943631657738578, 77.62045846193489]}
           zoom={16}
           onClick={() => alert("ola")}
         >
           <Markers />
+          {currentPosition && (
+            <Marker position={currentPosition} icon={customIcon} />
+          )}
           <TileLayer
             attribution=""
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png?lang=en"
           />
-          <MarkerClusterGroup chunkedLoading>
-            {cityData ? (
+          {capturedLocations &&
+            capturedLocations.length > 0 && ( // Check if capturedLocations is not null and contains elements
+              <Polyline positions={capturedLocations} color="red" />
+            )}
+          {cityData && ( // Conditional rendering to check if cityData is not null
+            <MarkerClusterGroup chunkedLoading>
               <Marker icon={customIcon} position={cityData}>
                 <Popup>{placeName}</Popup>
                 <Tooltip>
                   <h6>{placeName}</h6>
                 </Tooltip>
               </Marker>
-            ) : (
-              ""
-            )}
-          </MarkerClusterGroup>
-          <Polyline positions={capturedLocations} color="red" />
+            </MarkerClusterGroup>
+          )}
         </MapContainer>
       </div>
       <div id="popup1" class="overlay">
