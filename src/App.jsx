@@ -183,6 +183,7 @@ function App() {
   };
 
   const handleStopInterval = () => {
+    setCapturedLocations([]);
     setIntervalRunning(!intervalRunning);
   };
 
