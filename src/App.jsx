@@ -152,7 +152,7 @@ function App() {
       </div>
       <div
         style={{
-          width: "100%",
+          width: "50%",
           marginTop: "100px",
           display: "flex",
           justifyContent: "center",
