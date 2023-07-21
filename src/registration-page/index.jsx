@@ -15,7 +15,14 @@ export default function RegistrationPage({ goToMaps }) {
     setShow(true)
     setTimeout(()=>{
         setOTP(1234)
+        // setShow(true)
     },3000)
+  }
+
+  const letsGo = () => {
+    if(otp == "1234"){
+        setShow(goToMaps)
+    }
   }
   return (
     <>
@@ -43,7 +50,7 @@ export default function RegistrationPage({ goToMaps }) {
             >
              <span>{otp.length < 1 ?"Getting OTP..." :"Got OTP"}</span>
               <input className="otp-input" value={otp} maxlength="4" />
-              <button onClick={() => setShow(goToMaps)}>Let's Go</button>
+         <button onClick={letsGo}>Let's Go</button>
             </div>
           )}
         </div>
