@@ -2,11 +2,20 @@
   width: 100%;
 }
 
-/* height of the container */
+:root{
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+body{
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
 .leaflet-container {
-  height: 80vh;
+  height: 85vh;
   width: 100%;
-  /* border-radius: 2rem; */
+  border-radius: 2rem;
 }
 
 .cluster-icon {
@@ -43,6 +52,7 @@
   border-radius: 20px/50px;
   text-decoration: none;
   cursor: pointer;
+  margin: 1em;
   transition: all 0.3s ease-out;
 }
 .button:hover {

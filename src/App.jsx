@@ -18,13 +18,13 @@ import marker from "./assets/marker.png";
 function App() {
   const [capturedLocations, setCapturedLocations] = useState([]);
   const [currentPosition, setCurrentPosition] = useState(null);
-  const [loc, setLoc] = useState(null);
+  const [inputValue, setInputValue] = useState(null);
   const [error, setError] = useState(null);
   const [placeName, setPlaceName] = useState("loading");
   const [customerPosition, setCustomerPosition] = useState(null);
   const [cityData, setCityData] = useState(null);
   const [counter, setCounter] = useState(0);
-  const [intervalRunning, setIntervalRunning] = useState(true);
+  const [intervalRunning, setIntervalRunning] = useState(false);
 
   const customIcon = new Icon({
     iconUrl: marker,
@@ -68,51 +68,6 @@ function App() {
     getLocation();
   }, []);
 
-  // useEffect(() => {
-  //   const getLocationAndUpdateCounter = async () => {
-  //     try {
-  //       const position = await new Promise((resolve, reject) => {
-  //         navigator.geolocation.getCurrentPosition(
-  //           (position) => resolve(position),
-  //           (error) => reject(error)
-  //         );
-  //       });
-
-  //       setCurrentPosition([
-  //         position.coords.latitude,
-  //         position.coords.longitude,
-  //       ]);
-  //       setCapturedLocations([
-  //         [position.coords.latitude, position.coords.longitude],
-  //       ]);
-  //       setError(null);
-  //     } catch (error) {
-  //       // Geolocation error
-  //       setCurrentPosition([13.0827, 80.2707]); // Chennai coordinates (center of the map)
-  //       setError(error.message);
-  //     }
-  //   };
-
-  //   getLocationAndUpdateCounter();
-
-  //   let timer = setInterval(() => {
-  //     getLocationAndUpdateCounter();
-  //     setCounter((prevCounter) => {
-  //       setCapturedLocations((prev) => [...prev, currentPosition]);
-  //       const updatedCounter = prevCounter + 1;
-  //       if (updatedCounter >= 10) {
-  //         clearInterval(timer);
-  //       }
-  //       return updatedCounter;
-  //     });
-  //   }, 1000);
-
-  //   // Clear the interval when the component unmounts
-  //   return () => {
-  //     clearInterval(timer);
-  //   };
-  // }, []);
-
   useEffect(() => {
     const getLocationAndUpdateCounter = async () => {
       try {
@@ -138,17 +93,13 @@ function App() {
         setError(error.message);
       }
     };
-
     getLocationAndUpdateCounter();
-
     let timer;
     if (intervalRunning) {
       timer = setInterval(() => {
         getLocationAndUpdateCounter();
       }, 1000);
     }
-
-    // Clear the interval when the component unmounts
     return () => {
       clearInterval(timer);
     };
@@ -187,45 +138,51 @@ function App() {
     setIntervalRunning(!intervalRunning);
   };
 
+  const addCustomerMarking = () => {
+    const inputValues = inputValue
+      .split(",")
+      .map((value) => parseFloat(value.trim()));
+    setCustomerPosition(inputValues);
+  };
+
   return (
     <>
-      {JSON.stringify(capturedLocations)}
-      {JSON.stringify(currentPosition)}
+      {JSON.stringify(customerPosition)}
       <div
         style={{
           width: "100%",
           display: "flex",
           justifyContent: "center",
-          marginBottom: "1em",
         }}
       >
         <a class="button" href="#popup1">
           Let me Pop up
         </a>
+        <button style={{ margin: "1em" }} onClick={handleStopInterval}>
+          {!intervalRunning ? "Start Capturing" : "Stop Capturing"}
+        </button>
       </div>
-      <button
-        style={{ position: "relative", bottom: "50px" }}
-        onClick={handleStopInterval}
-      >
-        {!intervalRunning ? "Start Capturing" : "Stop Capturing"}
-      </button>
+
       <div
         style={{
-          width: "80%",
-          marginTop: "100px",
+          width: "100%",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          flexDirection: "column",
         }}
       >
         <MapContainer
-          center={[12.943631657738578, 77.62045846193489]}
+          center={customerPosition || [12.943631657738578, 77.62045846193489]}
           zoom={16}
           onClick={() => alert("ola")}
         >
           <Markers />
           {currentPosition && (
             <Marker position={currentPosition} icon={customIcon} />
+          )}
+          {customerPosition && (
+            <Marker position={customerPosition} icon={customIcon} />
           )}
           <TileLayer
             attribution=""
@@ -273,13 +230,13 @@ function App() {
                 />
                 <label for="expires">Phone</label>
               </span>
-
               <span>
                 <input
                   class="slide-up"
                   id="security"
                   type="text"
                   placeholder="Latitude"
+                  onChange={(e) => setInputValue(e.target.value)}
                 />
                 <label for="security">Longitude</label>
               </span>
@@ -312,7 +269,7 @@ function App() {
                   position: "relative",
                   bottom: "50px",
                 }}
-                onClick={getLocation}
+                onClick={addCustomerMarking}
               >
                 Get Current Location
               </button>
