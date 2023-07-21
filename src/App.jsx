@@ -26,7 +26,7 @@ function App() {
   const [customerPosition, setCustomerPosition] = useState(null);
   const [cityData, setCityData] = useState(null);
   const [intervalRunning, setIntervalRunning] = useState(false);
-  const [showMap,setShowMap] = useState(false)
+  const [showMap, setShowMap] = useState(false);
 
   // Function to fetch and set the place name based on the coordinates
   const handleSearchSubmit = async () => {
@@ -138,38 +138,45 @@ function App() {
     }
   };
 
+  // alert(currentPosition);
+
   return (
     <>
       <div className="container">
-    {!showMap ? <RegistrationPage goToMaps={()=>setShowMap(true)}/>
-    :
-    <div
-    style={{
-      width: "100%",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      flexDirection: "column",
-    }}
-  >
-    <PopUp
-    addCustomerMarking={addCustomerMarking}
-    setInputValue={setInputValue}
-    inputValue={inputValue}
-    intervalRunning={intervalRunning}
-    handleStopInterval={handleStopInterval}
-    />
-    <MapComponent
-    currentPosition={currentPosition}
-    capturedLocations={capturedLocations}
-    customerPosition={customerPosition}
-    cityData={cityData}
-    setCityData={setCityData}
-    placeName={placeName}
-    />
-    </div>
-  }
-    </div>
+        {!showMap ? (
+          <RegistrationPage goToMaps={() => setShowMap(true)} />
+        ) : (
+          
+          <div
+            style={{
+              width: "100%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              flexDirection: "column",
+            }}
+          >
+              <div style={{width:"100%",display:"flex",alignItems:"center",justifyContent:"space-around",textAlign:"center",background:"yellow",fontWeight:"bolder",color:"#FF9B9B"}}>
+        {currentPosition ? "Location is enabled, Live tracking is on" : "Location Disabled Cannot start live tracking"}
+      </div>
+            <PopUp
+              addCustomerMarking={addCustomerMarking}
+              setInputValue={setInputValue}
+              inputValue={inputValue}
+              intervalRunning={intervalRunning}
+              handleStopInterval={handleStopInterval}
+            />
+            <MapComponent
+              currentPosition={currentPosition}
+              capturedLocations={capturedLocations}
+              customerPosition={customerPosition}
+              cityData={cityData}
+              setCityData={setCityData}
+              placeName={placeName}
+            />
+          </div>
+        )}
+      </div>
     </>
   );
 }
