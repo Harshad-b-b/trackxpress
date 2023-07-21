@@ -1,0 +1,73 @@
+.reg-wrapper{
+    display: flex;
+    flex-direction: column;
+    /* justify-content: center; */
+    align-items: center;
+}
+.reg-wrapper img{
+    margin-bottom: 30px;
+    width: 100px;
+    height: 100px;
+}
+.form-wrapper{
+    display:flex;
+    /* flex-direction: column; */
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.reg-wrapper button {
+    margin-top: 10px;
+    transition: all 0.3s ease-out;
+    border: none !important;
+    outline: none !important;
+}
+.reg-wrapper button:hover{
+    background-color: #f3e709;
+}
+.input {
+    display: block;
+    border: none;
+    padding: 0;
+    width: 15ch;
+    background: repeating-linear-gradient(90deg, dimgrey 0, dimgrey 1ch, transparent 0, transparent 1.5ch) 0 100%/ 15ch 2px no-repeat;
+    font: 3ch droid sans mono, consolas, monospace;
+    letter-spacing: 0.5ch;
+}
+.input:focus {
+    outline: none;
+    color: dodgerblue;
+}
+
+.phno{
+    color: dodgerblue;
+    font: 3ch droid sans mono, consolas, monospace;
+    margin-right: 8px;
+}
+
+.otp-input{
+    display: block;
+    border: none;
+    padding: 0;
+    width: 5.8ch;
+    background: repeating-linear-gradient(90deg, dimgrey 0, dimgrey 1ch, transparent 0, transparent 1.5ch) 0 100%/ 5.4ch 2px no-repeat;
+    font: 5.4ch droid sans mono, consolas, monospace;
+    letter-spacing: 0.5ch;
+}
+
+.otp-input:focus {
+    outline: none;
+    color: dodgerblue;
+}
+
+.container {
+    background-image: linear-gradient(to right top, #bd94ab, #f2929b, #ff9f6a, #f7c12a, #a8eb12);
+}

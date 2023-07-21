@@ -1,36 +1,34 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 import "leaflet/dist/leaflet.css";
-import Geolocation from "react-geolocation";
-import {
-  MapContainer,
-  TileLayer,
-  Marker,
-  Popup,
-  Polyline,
-  useMapEvents,
-  Tooltip,
-} from "react-leaflet";
-import MarkerClusterGroup from "react-leaflet-cluster";
-import { Icon } from "leaflet";
-import marker from "./assets/marker.png";
+import RegistrationPage from "./registration-page";
+import PopUp from "./components/pop-up";
+import MapComponent from "./components/map-component";
+
+// Function to check if the input contains valid latitude and longitude
+function isValidInput(inputValue) {
+  if (!inputValue.includes(",")) {
+    return false;
+  }
+  const [latitude, longitude] = inputValue.split(",");
+  const isLatitudeValid = /^-?\d+(\.\d+)?$/.test(latitude.trim());
+  const isLongitudeValid = /^-?\d+(\.\d+)?$/.test(longitude.trim());
+
+  return isLatitudeValid && isLongitudeValid;
+}
 
 function App() {
+  // State variables
   const [capturedLocations, setCapturedLocations] = useState([]);
   const [currentPosition, setCurrentPosition] = useState(null);
-  const [inputValue, setInputValue] = useState(null);
-  const [error, setError] = useState(null);
+  const [inputValue, setInputValue] = useState("");
   const [placeName, setPlaceName] = useState("loading");
   const [customerPosition, setCustomerPosition] = useState(null);
   const [cityData, setCityData] = useState(null);
-  const [counter, setCounter] = useState(0);
   const [intervalRunning, setIntervalRunning] = useState(false);
+  const [showMap,setShowMap] = useState(false)
 
-  const customIcon = new Icon({
-    iconUrl: marker,
-    iconSize: [30, 30], // size of the icon
-  });
-
+  // Function to fetch and set the place name based on the coordinates
   const handleSearchSubmit = async () => {
     try {
       const url = `https://nominatim.openstreetmap.org/reverse?lat=${cityData[0]}&lon=${cityData[1]}&format=json&accept-language=en`;
@@ -49,25 +47,19 @@ function App() {
     }
   };
 
+  // Fetch place name when cityData changes
   useEffect(() => {
     if (cityData) {
       handleSearchSubmit();
     }
   }, [cityData]);
 
-  const Markers = () => {
-    const map = useMapEvents({
-      click(e) {
-        setCityData([e.latlng.lat, e.latlng.lng]);
-      },
-    });
-    return null;
-  };
-
+  // Fetch user's current location on component mount
   useEffect(() => {
     getLocation();
   }, []);
 
+  // Fetch user's current location at regular intervals
   useEffect(() => {
     const getLocationAndUpdateCounter = async () => {
       try {
@@ -86,13 +78,11 @@ function App() {
           ...prev,
           [position.coords.latitude, position.coords.longitude],
         ]);
-        setError(null);
       } catch (error) {
-        // Geolocation error
-        setCurrentPosition([13.0827, 80.2707]); // Chennai coordinates (center of the map)
-        setError(error.message);
+        console.error("Error fetching location:", error);
       }
     };
+
     getLocationAndUpdateCounter();
     let timer;
     if (intervalRunning) {
@@ -100,11 +90,14 @@ function App() {
         getLocationAndUpdateCounter();
       }, 1000);
     }
+
+    // Clean up the timer when the component is unmounted or intervalRunning changes
     return () => {
       clearInterval(timer);
     };
   }, [intervalRunning]);
 
+  // Get user's current location
   const getLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -113,170 +106,70 @@ function App() {
             position.coords.latitude,
             position.coords.longitude,
           ]);
-          // setCapturedLocations([
-          //   [position.coords.latitude, position.coords.longitude],
-          // ]);
-          setError(null);
         },
         (error) => {
-          // Geolocation permission denied
-          setCurrentPosition([13.0827, 80.2707]); // Chennai coordinates (center of the map)
-
-          setError(error.message);
+          setCurrentPosition(null);
+          console.error("Error fetching location:", error);
         }
       );
     } else {
-      // Geolocation not supported by the browser
-      setCurrentPosition(); // Bangalore coordinates
-
-      setError("Geolocation is not supported by your browser.");
+      setCurrentPosition(null);
+      console.error("Geolocation is not supported by your browser.");
     }
   };
 
+  // Handle the button click to start/stop interval
   const handleStopInterval = () => {
     setCapturedLocations([]);
     setIntervalRunning(!intervalRunning);
   };
 
+  // Handle adding customer marking from the input
   const addCustomerMarking = () => {
-    const inputValues = inputValue
-      .split(",")
-      .map((value) => parseFloat(value.trim()));
-    setCustomerPosition(inputValues);
+    if (isValidInput(inputValue)) {
+      const inputValues = inputValue
+        .split(",")
+        .map((value) => parseFloat(value.trim()));
+      setCustomerPosition(inputValues);
+      setInputValue("");
+    } else {
+      setInputValue("");
+      alert("Please enter valid coordinates");
+    }
   };
 
   return (
     <>
-      {JSON.stringify(customerPosition)}
-      <div
-        style={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-        }}
-      >
-        <a class="button" href="#popup1">
-          Let me Pop up
-        </a>
-        <button style={{ margin: "1em" }} onClick={handleStopInterval}>
-          {!intervalRunning ? "Start Capturing" : "Stop Capturing"}
-        </button>
-      </div>
-
-      <div
-        style={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          flexDirection: "column",
-        }}
-      >
-        <MapContainer
-          center={customerPosition || [12.943631657738578, 77.62045846193489]}
-          zoom={16}
-          onClick={() => alert("ola")}
-        >
-          <Markers />
-          {currentPosition && (
-            <Marker position={currentPosition} icon={customIcon} />
-          )}
-          {customerPosition && (
-            <Marker position={customerPosition} icon={customIcon} />
-          )}
-          <TileLayer
-            attribution=""
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png?lang=en"
-          />
-          {capturedLocations &&
-            capturedLocations.length > 0 && ( // Check if capturedLocations is not null and contains elements
-              <Polyline positions={capturedLocations} color="red" />
-            )}
-          {cityData && ( // Conditional rendering to check if cityData is not null
-            <MarkerClusterGroup chunkedLoading>
-              <Marker icon={customIcon} position={cityData}>
-                <Popup>{placeName}</Popup>
-                <Tooltip>
-                  <h6>{placeName}</h6>
-                </Tooltip>
-              </Marker>
-            </MarkerClusterGroup>
-          )}
-        </MapContainer>
-      </div>
-      <div id="popup1" class="overlay">
-        <div class="popup">
-          <h2>Here i am</h2>
-          <a class="close" href="#">
-            &times;
-          </a>
-          <div class="content">
-            <div class="row">
-              <span>
-                <input
-                  class="slide-up"
-                  id="card"
-                  type="text"
-                  placeholder="Name"
-                />
-                <label for="card">Customer</label>
-              </span>
-              <span>
-                <input
-                  class="slide-up"
-                  id="expires"
-                  type="text"
-                  placeholder="Number"
-                />
-                <label for="expires">Phone</label>
-              </span>
-              <span>
-                <input
-                  class="slide-up"
-                  id="security"
-                  type="text"
-                  placeholder="Latitude"
-                  onChange={(e) => setInputValue(e.target.value)}
-                />
-                <label for="security">Longitude</label>
-              </span>
-              <div
-                style={{
-                  color: "yellow",
-                  fontSize: "10px",
-                }}
-              >
-                <span
-                  style={{
-                    position: "relative",
-                    bottom: "30px",
-                  }}
-                >
-                  Please enter values separated by commas:
-                </span>
-                <span
-                  style={{
-                    position: "relative",
-                    bottom: "70px",
-                  }}
-                >
-                  For example: 12.3456, -98.7654, 42.1234, -71.9876
-                </span>
-              </div>
-
-              <button
-                style={{
-                  position: "relative",
-                  bottom: "50px",
-                }}
-                onClick={addCustomerMarking}
-              >
-                Get Current Location
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+      <div className="container">
+    {!showMap ? <RegistrationPage goToMaps={()=>setShowMap(true)}/>
+    :
+    <div
+    style={{
+      width: "100%",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      flexDirection: "column",
+    }}
+  >
+    <PopUp
+    addCustomerMarking={addCustomerMarking}
+    setInputValue={setInputValue}
+    inputValue={inputValue}
+    intervalRunning={intervalRunning}
+    handleStopInterval={handleStopInterval}
+    />
+    <MapComponent
+    currentPosition={currentPosition}
+    capturedLocations={capturedLocations}
+    customerPosition={customerPosition}
+    cityData={cityData}
+    setCityData={setCityData}
+    placeName={placeName}
+    />
+    </div>
+  }
+    </div>
     </>
   );
 }
