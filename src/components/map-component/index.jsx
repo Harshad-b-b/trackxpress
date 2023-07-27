@@ -9,7 +9,8 @@ const MapComponent = ({
   capturedLocations,
   cityData,
   setCityData,
-  placeName
+  placeName,
+  customersLoction,
 }) => {
   const mapRef = useRef();
   const Markers = () => {
@@ -29,7 +30,9 @@ const MapComponent = ({
   }, [customerPosition]);
 
   return (
- 
+    <>
+      {/* <div></div> */}
+
       <MapContainer
         ref={mapRef}
         center={customerPosition || [12.9352, 77.6245]}
@@ -46,13 +49,29 @@ const MapComponent = ({
         {capturedLocations.length > 0 && (
           <Polyline positions={capturedLocations} color="red" />
         )}
-        {cityData && (
+        {customersLoction.length > 0 &&
+          customersLoction.map((val) => {
+            return (
+              <>
+                <CustomMarker position={val[1]} />
+                <Polyline positions={val} color="red" />
+              </>
+            );
+          })}
+        {/* {cityData && (
           <MarkerClusterGroup chunkedLoading>
-            <CustomMarker position={cityData} show={true} placeName={placeName} />
+            <CustomMarker
+              position={[
+                [123, 123],
+                [567, 456],
+              ]}
+              show={true}
+              placeName={placeName}
+            />
           </MarkerClusterGroup>
-        )}
+        )} */}
       </MapContainer>
-    // </div>
+    </>
   );
 };
 

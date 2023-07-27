@@ -1,9 +1,11 @@
 export default function PopUp({
   addCustomerMarking,
-  setInputValue,
-  inputValue,
+  setLatitude,
+  setLongitude,
+  latitude,
+  longitude,
   intervalRunning,
-  handleStopInterval
+  handleStopInterval,
 }) {
   return (
     <>
@@ -53,8 +55,19 @@ export default function PopUp({
                   id="security"
                   type="text"
                   placeholder="Latitude"
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
+                  value={latitude}
+                  onChange={(e) => setLatitude(e.target.value)}
+                />
+                <label for="security">Latitude </label>
+              </span>
+              <span>
+                <input
+                  class="slide-up"
+                  id="security"
+                  type="text"
+                  placeholder="Set"
+                  value={longitude}
+                  onChange={(e) => setLongitude(e.target.value)}
                 />
                 <label for="security">Longitude</label>
               </span>

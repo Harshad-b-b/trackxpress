@@ -21,12 +21,14 @@ function App() {
   // State variables
   const [capturedLocations, setCapturedLocations] = useState([]);
   const [currentPosition, setCurrentPosition] = useState(null);
-  const [inputValue, setInputValue] = useState("");
+  const [latitude, setLatitude] = useState("");
   const [placeName, setPlaceName] = useState("loading");
   const [customerPosition, setCustomerPosition] = useState(null);
   const [cityData, setCityData] = useState(null);
   const [intervalRunning, setIntervalRunning] = useState(false);
   const [showMap, setShowMap] = useState(false);
+  const [customersLoction, setCustmersLocation] = useState([]);
+  const [longitude, setLongitude] = useState(null);
 
   // Function to fetch and set the place name based on the coordinates
   const handleSearchSubmit = async () => {
@@ -88,7 +90,7 @@ function App() {
     if (intervalRunning) {
       timer = setInterval(() => {
         getLocationAndUpdateCounter();
-      }, 1000);
+      }, 2000);
     }
 
     // Clean up the timer when the component is unmounted or intervalRunning changes
@@ -126,19 +128,13 @@ function App() {
 
   // Handle adding customer marking from the input
   const addCustomerMarking = () => {
-    if (isValidInput(inputValue)) {
-      const inputValues = inputValue
-        .split(",")
-        .map((value) => parseFloat(value.trim()));
-      setCustomerPosition(inputValues);
-      setInputValue("");
-    } else {
-      setInputValue("");
-      alert("Please enter valid coordinates");
-    }
+    let long = Number(longitude);
+    let lat = Number(latitude);
+    setCustmersLocation((prev) => [...prev, [currentPosition, [lat, long]]]);
+    console.log(customersLoction, "location");
+    setLatitude("");
+    setLongitude("");
   };
-
-  // alert(currentPosition);
 
   return (
     <>
@@ -146,7 +142,6 @@ function App() {
         {!showMap ? (
           <RegistrationPage goToMaps={() => setShowMap(true)} />
         ) : (
-          
           <div
             style={{
               width: "100%",
@@ -156,13 +151,30 @@ function App() {
               flexDirection: "column",
             }}
           >
-              <div style={{width:"100%",display:"flex",alignItems:"center",justifyContent:"space-around",textAlign:"center",background:"yellow",fontWeight:"bolder",color:"#FF9B9B"}}>
-        {currentPosition ? "Location is enabled, Live tracking is on" : "Location Disabled Cannot start live tracking"}
-      </div>
+            {JSON.stringify(customersLoction)}
+            {JSON.stringify(currentPosition)}
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-around",
+                textAlign: "center",
+                background: "yellow",
+                fontWeight: "bolder",
+                color: "#FF9B9B",
+              }}
+            >
+              {currentPosition
+                ? "Location is enabled, Live tracking is on"
+                : "Location Disabled Cannot start live tracking"}
+            </div>
             <PopUp
               addCustomerMarking={addCustomerMarking}
-              setInputValue={setInputValue}
-              inputValue={inputValue}
+              setLatitude={setLatitude}
+              setLongitude={setLongitude}
+              latitude={latitude}
+              longitude={longitude}
               intervalRunning={intervalRunning}
               handleStopInterval={handleStopInterval}
             />
@@ -171,6 +183,7 @@ function App() {
               capturedLocations={capturedLocations}
               customerPosition={customerPosition}
               cityData={cityData}
+              customersLoction={customersLoction}
               setCityData={setCityData}
               placeName={placeName}
             />
