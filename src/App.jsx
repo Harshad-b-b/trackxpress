@@ -151,8 +151,6 @@ function App() {
               flexDirection: "column",
             }}
           >
-            {JSON.stringify(customersLoction)}
-            {JSON.stringify(currentPosition)}
             <div
               style={{
                 width: "100%",
