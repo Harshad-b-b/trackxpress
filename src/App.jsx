@@ -167,6 +167,7 @@ function App() {
                 ? "Location is enabled, Live tracking is on"
                 : "Location Disabled Cannot start live tracking"}
             </div>
+
             <PopUp
               addCustomerMarking={addCustomerMarking}
               setLatitude={setLatitude}

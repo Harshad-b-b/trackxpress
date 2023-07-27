@@ -49,15 +49,16 @@ const MapComponent = ({
         {capturedLocations.length > 0 && (
           <Polyline positions={capturedLocations} color="red" />
         )}
-        {customersLoction.length > 0 &&
-          customersLoction.map((val) => {
-            return (
-              <>
-                <CustomMarker position={val[1]} />
-                <Polyline positions={val} color="red" />
-              </>
-            );
-          })}
+        {customersLoction.length >= 0 && currentPosition
+          ? customersLoction.map((val) => {
+              return (
+                <>
+                  <CustomMarker position={val[1]} />
+                  <Polyline positions={val} color="red" />
+                </>
+              );
+            })
+          : ""}
         {/* {cityData && (
           <MarkerClusterGroup chunkedLoading>
             <CustomMarker
